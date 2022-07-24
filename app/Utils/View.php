@@ -13,11 +13,20 @@ class View
         return file_exists($file) ? file_get_contents($file) : '';
     }
 
-    public static function render($view) 
+    public static function render($view, $vars = []) 
     {   
+
         // conteúdo da view
         $contentView = self::getContentView($view);
 
-        return $contentView;
+        // chaves do array de variaveis
+        $keys = array_keys($vars);
+        $keys = array_map(function($item) {
+            return '{{'.$item.'}}';
+        }, $keys);
+
+        $content = str_replace($keys, array_values($vars), $contentView);
+        
+        return $content;
     }
 }
