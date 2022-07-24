@@ -1,0 +1,8 @@
+{
+    "name": "valdirsillva/php-with-mvc",
+    "autoload": {
+        "psr-4": {
+            "App\\": "app"
+        }
+    }
+}
