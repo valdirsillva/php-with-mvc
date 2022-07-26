@@ -74,6 +74,16 @@ class Router
             // obtém a rota atual
             $route = $this->getRoute();
 
+            // verifica o controlador
+            if (!isset($route['controller'])) {
+                throw new Exception("URL não pode ser processada", 500);
+            }
+            
+            $args = [];
+
+            return call_user_func_array($route['controller'], $args);
+
+
         } catch(Exception $e) {
             return new Response($e->getCode(), $e->getMessage());
         }

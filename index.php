@@ -12,7 +12,7 @@ define('URL','http://localhost/php-with-mvc');
 $obRouter = new Router(URL);
 
 // rota home 
-$obRouter->post('/', [
+$obRouter->get('/', [
     function() {
         return new Response(200, Home::getHome());
     }
