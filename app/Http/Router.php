@@ -4,6 +4,7 @@ namespace App\Http;
 
 use \Closure;
 use \Exception;
+use \ReflectionFunction;
 
 class Router 
 {
@@ -41,6 +42,16 @@ class Router
             }
         }
 
+        // variaveis da rota
+        $params['variables'] = [];
+
+        //padrao de validacao das rotas
+        $patternVariable = '/{(.*?)}/';
+        if (preg_match_all($patternVariable,$route,$matches)) {
+            $route = preg_replace($patternVariable,'(.*?)', $route);
+            $params['variables'] = $matches[1];
+        }
+
         $patternRoute = '/^'.str_replace('/','\/',$route).'$/';
         // add rota dentro da classe
         $this->routes[$patternRoute][$method] = $params;        
@@ -66,7 +77,6 @@ class Router
         return $this->addRoute('DELETE', $route, $params);
     }
 
-
     // Executa a rota atual
     public function run() 
     {
@@ -81,8 +91,14 @@ class Router
             
             $args = [];
 
-            return call_user_func_array($route['controller'], $args);
+            $reflection = new ReflectionFunction($route['controller']);
+            
+            foreach($reflection->getParameters() as $parameter) {
+                $name = $parameter->getName();
+                $args[$name] = $route['variables'][$name] ?? '';
+            }
 
+            return call_user_func_array($route['controller'], $args);
 
         } catch(Exception $e) {
             return new Response($e->getCode(), $e->getMessage());
@@ -97,10 +113,17 @@ class Router
 
         foreach($this->routes as $patternRoute => $methods) {
             // verifica se a uri bate com o padrao
-            if (preg_match($patternRoute, $uri)) {
+            if (preg_match($patternRoute, $uri, $matches)) {
                 
                 // verifica o metodo
                 if (isset($methods[$httpMethod])) {
+                    unset($matches[0]);
+                    
+                    // variaveis processadas
+                    $keys = $methods[$httpMethod]['variables'];
+                    $methods[$httpMethod]['variables'] = array_combine($keys, $matches);
+                    $methods[$httpMethod]['variables']['request'] = $this->request; 
+
                     return $methods[$httpMethod];
                 }
 
