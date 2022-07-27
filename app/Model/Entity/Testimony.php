@@ -27,4 +27,9 @@ class Testimony
 
         return true;
     }
+
+    public static function getTestimonies($where = null, $order = null, $limit = null, $fields = '*') 
+    {
+        return ( new Database('depoimentos'))->select($where, $order, $limit, $fields);
+    }
 }
