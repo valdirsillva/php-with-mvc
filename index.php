@@ -5,7 +5,13 @@ require __DIR__ . "/vendor/autoload.php";
 use App\Http\Router;
 use App\Utils\View;
 
-define('URL','http://localhost/php-with-mvc');
+use App\Config\HandleEnviromentVariable;
+
+// carrega variaveis de ambiente
+HandleEnviromentVariable::get();
+
+
+define('URL',$_ENV['URL']);
 
 View::init([
     'URL' => URL
