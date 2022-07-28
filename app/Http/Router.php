@@ -5,6 +5,7 @@ namespace App\Http;
 use \Closure;
 use \Exception;
 use \ReflectionFunction;
+use App\Http\Middleware\Queue as MiddlewareQueue;
 
 class Router 
 {
@@ -18,7 +19,7 @@ class Router
 
     public function __construct($url = '') 
     {
-        $this->request = new Request();
+        $this->request = new Request($this);
         $this->url = $url;
         $this->setPrefix();
     }
@@ -41,6 +42,8 @@ class Router
                 continue;
             }
         }
+        // middlewares da rota
+        $params['middlewares'] = $params['middlewares'] ?? [];
 
         // variaveis da rota
         $params['variables'] = [];
@@ -98,7 +101,18 @@ class Router
                 $args[$name] = $route['variables'][$name] ?? '';
             }
 
-            return call_user_func_array($route['controller'], $args);
+            // echo '<pre>';
+            // print_r($route);
+            // echo '</pre>';
+            // exit;
+
+            // Retorna a execuçao da fila de middlewares
+            return (new MiddlewareQueue(
+                        $route['middlewares'], 
+                        $route['controller'], 
+                        $args
+                    ))->next($this->request);
+
 
         } catch(Exception $e) {
             return new Response($e->getCode(), $e->getMessage());
@@ -143,6 +157,11 @@ class Router
         $xUri = strlen($this->prefix) ? explode($this->prefix,$uri) : [$uri];
 
         return end($xUri);
+    }
+
+    public function getCurrentUrl() 
+    {
+        return $this->url.$this->getUri();
     }
 
 }
