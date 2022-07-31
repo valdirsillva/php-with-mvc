@@ -101,11 +101,6 @@ class Router
                 $args[$name] = $route['variables'][$name] ?? '';
             }
 
-            // echo '<pre>';
-            // print_r($route);
-            // echo '</pre>';
-            // exit;
-
             // Retorna a execuçao da fila de middlewares
             return (new MiddlewareQueue(
                         $route['middlewares'], 
@@ -162,6 +157,15 @@ class Router
     public function getCurrentUrl() 
     {
         return $this->url.$this->getUri();
+    }
+
+    public function redirect(string $route) 
+    {
+        $url = $this->url.$route;
+
+        // Executa redirect
+        header('location:'.$url);
+        exit;
     }
 
 }
