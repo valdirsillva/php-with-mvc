@@ -15,11 +15,11 @@ class Page
       ],
       'testimonies' => [
         'label' => 'Depoimentos',
-        'link' => URL .'/testimonies'
+        'link' => URL .'/admin/testimonies'
       ],
       'users' => [
         'label' => 'Usuarios',
-        'link' => URL .'/user'
+        'link' => URL .'/admin/user'
       ]
     ];
 
@@ -68,6 +68,43 @@ class Page
         return View::render('admin/menu/box', [
             'links' => $links
         ]);
-    } 
+    }
+    
+    
+    public static function getPagination($request, $pagination) 
+    {
+        $pages = $pagination->getPages();
+    
+        if (count($pages) <= 1) return '';
+        
+        $links = '';
+
+        $url = $request->getRouter()->getCurrentUrl();
+
+        $queryParams = $request->getQueryParams();
+
+        // renderiza os links
+        foreach ($pages as $page) {
+            # altera pagina
+            $queryParams['page'] = $page['page'];
+
+            // link da pagina
+            $link = $url .'?'. http_build_query($queryParams);
+
+            // VIEW
+            $links .=  View::render('admin/paginations/link', [
+                "page" => $page['page'],
+                "link" => $link,
+                "active" => $page['current'] ? 'active' : ''
+            ]);
+        }
+
+        return View::render('admin/paginations/box', [
+            "links" => $links,
+        ]);
+
+
+    }
+
  
 }
