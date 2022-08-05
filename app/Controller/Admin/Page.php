@@ -19,7 +19,7 @@ class Page
       ],
       'users' => [
         'label' => 'Usuarios',
-        'link' => URL .'/admin/user'
+        'link' => URL .'/admin/users'
       ]
     ];
 
