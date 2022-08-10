@@ -15,4 +15,16 @@ class Api
             'email' => 'valdirpiresba@gmail.com'
         ];
     }
+
+    protected static function getPagination($request, $pagination) 
+    {
+        $queryParams = $request->getQueryParams();
+
+        $pages = $pagination->getPages();
+
+        return [
+            'paginaAtual' => isset($queryParams['page']) ? $queryParams['page'] : 1,
+            'quantidadePaginas' => !empty($pages) ? count($pages) : 1
+        ];
+    }
 }
