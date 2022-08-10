@@ -17,11 +17,18 @@ class Router
 
     private $request;
 
+    private $contentType = 'text/html';
+
     public function __construct($url = '') 
     {
         $this->request = new Request($this);
         $this->url = $url;
         $this->setPrefix();
+    }
+    
+    public function setContentType($contentType) 
+    {
+       $this->contentType = $contentType;
     }
 
     private function setPrefix() 
@@ -110,7 +117,20 @@ class Router
 
 
         } catch(Exception $e) {
-            return new Response($e->getCode(), $e->getMessage());
+            return new Response($e->getCode(), $this->getErrorMessage($e->getMessage()), $this->$contentType);
+        }
+    }
+
+    private function getErrorMessage($messageError) 
+    {
+       switch ($this->contentType) {
+        case 'application/json':
+            return [
+                'error' => $messageError
+            ];
+        default: 
+         return $messageError;
+         break;   
         }
     }
 
@@ -151,7 +171,7 @@ class Router
 
         $xUri = strlen($this->prefix) ? explode($this->prefix,$uri) : [$uri];
 
-        return end($xUri);
+        return rtrim(end($xUri), '/');
     }
 
     public function getCurrentUrl() 

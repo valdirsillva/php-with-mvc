@@ -46,4 +46,28 @@ class Testimony extends Api
             'paginacao' => parent::getPagination($request, $pagination)
         ];
     }
+
+    public static function getTestimony($request, $id) 
+    {
+        // Valida o id do depoimento 
+        if (!is_numeric($id)) {
+            throw new \Exception("O id não é válido", 400); 
+        }
+
+        // busca depoimento
+        $obTestimony = EntityTestimony::getTestimonyById($id);
+
+        // Valida se o depoimento existe
+        if(!$obTestimony instanceof EntityTestimony) {
+            throw new \Exception("O depoimento" .$id. " não foi encontrado", 404);
+        }
+
+        return [
+            'id' => $obTestimony->id,
+            'nome' => $obTestimony->nome,
+            'mensagem' => $obTestimony->mensagem,
+            'data' => $obTestimony->data
+        ];
+
+    }
 }
