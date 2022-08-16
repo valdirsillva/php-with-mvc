@@ -117,7 +117,7 @@ class Router
 
 
         } catch(Exception $e) {
-            return new Response($e->getCode(), $this->getErrorMessage($e->getMessage()), $this->$contentType);
+            return new Response($e->getCode(), $this->getErrorMessage($e->getMessage()), $this->contentType);
         }
     }
 

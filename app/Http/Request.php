@@ -23,11 +23,27 @@ class Request
     {
         $this->router = $router;
         $this->queryParams = $_GET ?? [];
-        $this->postVars = $_POST ?? [];
         $this->headers = getallheaders();
         $this->httpMethod = $_SERVER['REQUEST_METHOD'] ?? [];
         
-        $this->setUri();  
+        $this->setUri(); 
+        $this->setPostVars(); 
+    }
+
+    // Método responsavel poe definir as variaveis do POST
+    private function setPostVars() 
+    {
+        // Verifica o metodo da requisição
+        if ($this->httpMethod == 'GET') return false;
+
+        // POST padrão
+        $this->postVars = $_POST ?? [];
+
+        // POST JSON
+        $inputRaw = file_get_contents('php://input');
+
+        $this->postVars = (strlen($inputRaw) && empty($_POST)) ? json_decode($inputRaw, true) : $this->postVars;
+
     }
 
     private function setUri() 

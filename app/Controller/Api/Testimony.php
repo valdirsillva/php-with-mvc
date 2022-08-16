@@ -70,4 +70,33 @@ class Testimony extends Api
         ];
 
     }
+    
+    public static function setNewTestimony($request) 
+    {
+        // PostVars
+        $postVars = $request->getPostVars();
+        
+        // Valida os campos obrigatorios
+        if (!isset($postVars['nome']) or !isset($postVars['mensagem'])) {
+            throw new \Exception('Os campos nome e mensagem são obrigatorios', 400);
+        }
+
+        // Novo depoimento
+        $obTestimony = new EntityTestimony;
+        $obTestimony->nome = $postVars['nome'];
+        $obTestimony->mensagem = $postVars['mensagem'];
+        $obTestimony->add();
+
+        // Retorna os detalhes do depoimento cadastrado
+        return [
+            'id' => $obTestimony->id,
+            'nome' => $obTestimony->nome,
+            'mensagem' => $obTestimony->mensagem,
+            'data' => $obTestimony->data
+        ];
+
+       
+    }
+
+
 }
