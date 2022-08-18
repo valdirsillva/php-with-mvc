@@ -38,6 +38,17 @@ $obRouter->put('/api/v1/testimonies/{id}', [
         'user-basic-auth'
     ],
     function($request, $id) {
-        return new Response(201, Api\Testimony::setEditTestimony($request, $id), 'application/json');
+        return new Response(200, Api\Testimony::setEditTestimony($request, $id), 'application/json');
+    }
+]);
+
+// Rota de exclusão de depoimentos
+$obRouter->delete('/api/v1/testimonies/{id}', [
+    'middlewares' => [
+        'api',
+        'user-basic-auth'
+    ],
+    function($request, $id) {
+        return new Response(200, Api\Testimony::setDeleteTestimony($request, $id), 'application/json');
     }
 ]);

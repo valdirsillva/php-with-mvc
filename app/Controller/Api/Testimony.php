@@ -95,8 +95,7 @@ class Testimony extends Api
             'data' => $obTestimony->data
         ];  
     }
-
-    
+   
     public static function setEditTestimony($request, $id) 
     {
         // PostVars
@@ -129,6 +128,23 @@ class Testimony extends Api
         ];
     }
 
+    // Metodo responsavel
+    public static function setDeleteTestimony($request, $id) 
+    {
+        // BUsca o depoimento no banco
+        $obTestimony = EntityTestimony::getTestimonyById($id);
 
+        // Valida a instancia
+        if (!$obTestimony instanceof EntityTestimony) {
+            throw new \Exception("O depoimento" .$id. " não foi encontrado", 404);
+        }
 
+        // Exclui o depoimento
+        $obTestimony->setDelete();
+
+        // Retorna sucesso da exclusão
+        return [
+            'id' => true
+        ];
+    }
 }
