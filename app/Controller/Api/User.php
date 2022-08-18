@@ -46,26 +46,25 @@ class User extends Api
         ];
     }
 
-    public static function getTestimony($request, $id) 
+    public static function getUser($request, $id) 
     {
-        // Valida o id do depoimento 
+        // Valida o id do usuário
         if (!is_numeric($id)) {
             throw new \Exception("O id não é válido", 400); 
         }
 
         // busca depoimento
-        $obTestimony = EntityUser::getTestimonyById($id);
+        $obUser = EntityUser::getUserById($id);
 
-        // Valida se o depoimento existe
-        if(!$obTestimony instanceof EntityUser) {
-            throw new \Exception("O depoimento" .$id. " não foi encontrado", 404);
+        // Valida se o usuario existe
+        if(!$obUser instanceof EntityUser) {
+            throw new \Exception("O Usuário" .$id. " não foi encontrado", 404);
         }
 
         return [
-            'id' => $obTestimony->id,
-            'nome' => $obTestimony->nome,
-            'mensagem' => $obTestimony->mensagem,
-            'data' => $obTestimony->data
+            'id' => $obUser->id,
+            'nome' => $obUser->nome,
+            'email' => $obUser->email
         ];
 
     }
