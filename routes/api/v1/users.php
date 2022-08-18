@@ -32,7 +32,7 @@ $obRouter->post('/api/v1/users', [
         'user-basic-auth'
     ],
     function($request) {
-        return new Response(201, Api\Testimony::setNewTestimony($request), 'application/json');
+        return new Response(201, Api\User::setNewUser($request), 'application/json');
     }
 ]);
 

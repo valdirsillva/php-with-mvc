@@ -69,28 +69,35 @@ class User extends Api
 
     }
     
-    public static function setNewTestimony($request) 
+    // Método responsável por cadastrar um novo Usuario
+    public static function setNewUser($request) 
     {
         // PostVars
         $postVars = $request->getPostVars();
         
         // Valida os campos obrigatorios
-        if (!isset($postVars['nome']) or !isset($postVars['mensagem'])) {
-            throw new \Exception('Os campos nome e mensagem são obrigatorios', 400);
+        if (!isset($postVars['nome']) or !isset($postVars['email']) or !isset($postVars['senha'])) {
+            throw new \Exception('Os campos nome, email e senha são obrigatorios', 400);
         }
 
-        // Novo depoimento
-        $obTestimony = new EntityUser;
-        $obTestimony->nome = $postVars['nome'];
-        $obTestimony->mensagem = $postVars['mensagem'];
-        $obTestimony->add();
+        // Valida a duplicação de email
+        $obUserEmail = EntityUser::getUserByEmail($postVars['email']);
+        if($obUserEmail instanceof EntityUser) {
+            throw new \Exception(" O E-mail'".$postVars['email']."' já está em uso", 400);
+        }
+         
+        // Novo usuario
+        $obUser = new EntityUser;
+        $obUser->nome = $postVars['nome'];
+        $obUser->email = $postVars['email'];
+        $obUser->senha = password_hash($postVars['senha'], PASSWORD_DEFAULT);
+        $obUser->add();
 
-        // Retorna os detalhes do depoimento cadastrado
+        // Retorna os detalhes do usuario cadastrado
         return [
-            'id' => $obTestimony->id,
-            'nome' => $obTestimony->nome,
-            'mensagem' => $obTestimony->mensagem,
-            'data' => $obTestimony->data
+            'id' => $obUser->id,
+            'nome' => $obUser->nome,
+            'email' => $obUser->email
         ];  
     }
    
