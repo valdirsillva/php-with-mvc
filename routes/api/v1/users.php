@@ -43,7 +43,7 @@ $obRouter->put('/api/v1/users/{id}', [
         'user-basic-auth'
     ],
     function($request, $id) {
-        return new Response(200, Api\Testimony::setEditTestimony($request, $id), 'application/json');
+        return new Response(200, Api\User::setEditUser($request, $id), 'application/json');
     }
 ]);
 

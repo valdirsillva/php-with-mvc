@@ -53,7 +53,7 @@ class User extends Api
             throw new \Exception("O id não é válido", 400); 
         }
 
-        // busca depoimento
+        // busca usuario
         $obUser = EntityUser::getUserById($id);
 
         // Valida se o usuario existe
@@ -101,36 +101,41 @@ class User extends Api
         ];  
     }
    
-    public static function setEditTestimony($request, $id) 
-    {
-        // PostVars
+    public static function setEditUser($request, $id) 
+    {// PostVars
         $postVars = $request->getPostVars();
         
         // Valida os campos obrigatorios
-        if (!isset($postVars['nome']) or !isset($postVars['mensagem'])) {
-            throw new \Exception('Os campos nome e mensagem são obrigatorios', 400);
+        if (!isset($postVars['nome']) or !isset($postVars['email']) or !isset($postVars['senha'])) {
+            throw new \Exception('Os campos nome, email e senha são obrigatorios', 400);
         }
 
-        // BUsca o depoimento no banco
-        $obTestimony = EntityUser::getTestimonyById($id);
+        // busca usuario
+        $obUser = EntityUser::getUserById($id);
 
-        // Valida a instancia
-        if (!$obTestimony instanceof EntityUser) {
-            throw new \Exception("O depoimento" .$id. " não foi encontrado", 404);
+        // Valida se o usuario existe
+        if(!$obUser instanceof EntityUser) {
+            throw new \Exception("O Usuário" .$id. " não foi encontrado", 404);
         }
 
-        // Atualiza o depoimento
-        $obTestimony->nome = $postVars['nome'];
-        $obTestimony->mensagem = $postVars['mensagem'];
-        $obTestimony->setUpdate();
+        // Valida a duplicação de email
+        $obUserEmail = EntityUser::getUserByEmail($postVars['email']);
+        if($obUserEmail instanceof EntityUser && $obTestimony->id != $obUser->id) {
+            throw new \Exception(" O E-mail'".$postVars['email']."' já está em uso", 400);
+        }
+         
+        // Atualiza usuario
+        $obUser->nome = $postVars['nome'];
+        $obUser->email = $postVars['email'];
+        $obUser->senha = password_hash($postVars['senha'], PASSWORD_DEFAULT);
+        $obUser->setUpdate();
 
-        // Retorna os detalhes do depoimento atualizado
+        // Retorna os detalhes do usuario cadastrado
         return [
-            'id' => $obTestimony->id,
-            'nome' => $obTestimony->nome,
-            'mensagem' => $obTestimony->mensagem,
-            'data' => $obTestimony->data
-        ];
+            'id' => $obUser->id,
+            'nome' => $obUser->nome,
+            'email' => $obUser->email
+        ];  
     }
 
     // Metodo responsavel
