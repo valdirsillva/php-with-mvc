@@ -93,10 +93,42 @@ class Testimony extends Api
             'nome' => $obTestimony->nome,
             'mensagem' => $obTestimony->mensagem,
             'data' => $obTestimony->data
-        ];
-
-       
+        ];  
     }
+
+    
+    public static function setEditTestimony($request, $id) 
+    {
+        // PostVars
+        $postVars = $request->getPostVars();
+        
+        // Valida os campos obrigatorios
+        if (!isset($postVars['nome']) or !isset($postVars['mensagem'])) {
+            throw new \Exception('Os campos nome e mensagem são obrigatorios', 400);
+        }
+
+        // BUsca o depoimento no banco
+        $obTestimony = EntityTestimony::getTestimonyById($id);
+
+        // Valida a instancia
+        if (!$obTestimony instanceof EntityTestimony) {
+            throw new \Exception("O depoimento" .$id. " não foi encontrado", 404);
+        }
+
+        // Atualiza o depoimento
+        $obTestimony->nome = $postVars['nome'];
+        $obTestimony->mensagem = $postVars['mensagem'];
+        $obTestimony->setUpdate();
+
+        // Retorna os detalhes do depoimento atualizado
+        return [
+            'id' => $obTestimony->id,
+            'nome' => $obTestimony->nome,
+            'mensagem' => $obTestimony->mensagem,
+            'data' => $obTestimony->data
+        ];
+    }
+
 
 
 }

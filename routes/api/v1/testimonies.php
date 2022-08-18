@@ -22,7 +22,6 @@ $obRouter->get('/api/v1/testimonies/{id}', [
     }
 ]);
 
-
 $obRouter->post('/api/v1/testimonies', [
     'middlewares' => [
         'api',
@@ -30,5 +29,15 @@ $obRouter->post('/api/v1/testimonies', [
     ],
     function($request) {
         return new Response(201, Api\Testimony::setNewTestimony($request), 'application/json');
+    }
+]);
+
+$obRouter->put('/api/v1/testimonies/{id}', [
+    'middlewares' => [
+        'api',
+        'user-basic-auth'
+    ],
+    function($request, $id) {
+        return new Response(201, Api\Testimony::setEditTestimony($request, $id), 'application/json');
     }
 ]);
