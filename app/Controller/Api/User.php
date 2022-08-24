@@ -68,6 +68,18 @@ class User extends Api
         ];
 
     }
+
+    public static function getCurrentUser($request) 
+    {
+        // Usuário atual
+        $obUser = $request->user;
+
+        return [
+            'id' => $obUser->id,
+            'nome' => $obUser->nome,
+            'email' => $obUser->email
+        ];
+    }
     
     // Método responsável por cadastrar um novo Usuario
     public static function setNewUser($request) 
@@ -138,19 +150,24 @@ class User extends Api
         ];  
     }
 
-    // Metodo responsavel
-    public static function setDeleteTestimony($request, $id) 
+    // Metodo responsavel por excluir um usuário
+    public static function setDeleteUser($request, $id) 
     {
-        // BUsca o depoimento no banco
-        $obTestimony = EntityUser::getTestimonyById($id);
+        // BUsca o usuario no banco
+        $obUser = EntityUser::getUserById($id);
 
-        // Valida a instancia
-        if (!$obTestimony instanceof EntityUser) {
-            throw new \Exception("O depoimento" .$id. " não foi encontrado", 404);
+        // Valida a instancia de usuário
+        if (!$obUser instanceof EntityUser) {
+            throw new \Exception("O Usuário" .$id. " não foi encontrado", 404);
         }
 
-        // Exclui o depoimento
-        $obTestimony->setDelete();
+        // Impede a exclusão do próprio cadastro
+        if ($obUser->id == $request->user->id) {
+            throw new \Exceptio("Não é possível excluir o cadastro atualmente conectado", 400);
+        }
+
+        // Exclui o usuário
+        $obUser->setDelete();
 
         // Retorna sucesso da exclusão
         return [
